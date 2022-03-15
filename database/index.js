@@ -26,5 +26,12 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.users = require("../models/user.model")(sequelize, Sequelize);
+db.stations = require("../models/station.model")(sequelize, Sequelize);
+
+db.users.hasMany(db.stations, { as: "stations" });
+db.stations.belongsTo(db.users, {
+  foreignKey: "userId",
+  as: "user",
+});
 
 module.exports = db;
