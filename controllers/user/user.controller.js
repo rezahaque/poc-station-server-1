@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const db = require('../../database');
 const User = db.users;
 const Op = db.Sequelize.Op;
@@ -6,6 +7,24 @@ const catchAsync = require("../../utils/catchAsync");
 const passwordHelper = require('../../helpers/password');
 const tokenHelper = require('../../helpers/token');
 const AppError = require('../../utils/appError');
+
+const fetchRegisteredUser = catchAsync(async (req, res, next) => {
+    if (!req.cookies.token) {
+        return next(new AppError('Cookies not found!'));
+    }
+
+    const auth = jwt.verify(
+        req.cookies.token,
+        process.env.ACCESS_TOKEN_SECRET
+    );
+
+    const user = await User.findOne({ where: { id: auth.id } });
+    user.password = undefined; // hide the user password
+
+    res.status(200).json({
+        user,
+    });
+});
 
 const login = catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
@@ -28,7 +47,6 @@ const login = catchAsync(async (req, res, next) => {
 
 const signup = catchAsync(async (req, res, next) => {
     const { name, email, password } = req.body;
-    console.log(req.body)
 
     const existedUser = await User.findOne({
         where: { email }
@@ -73,10 +91,18 @@ const createSendToken = (user, statusCode, res) => {
         statusCode,
         user,
         token
-    })
+    });
 }
+
+const logout = (_, res) => {
+    return res.status(202).clearCookie('token').send({
+        message: 'Token deleted',
+    });
+};
 
 module.exports = {
     login,
-    signup
+    logout,
+    signup,
+    fetchRegisteredUser
 }
