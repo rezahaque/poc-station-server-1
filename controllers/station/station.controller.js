@@ -1,6 +1,19 @@
 const catchAsync = require("../../utils/catchAsync");
 const db = require('../../database');
 const Station = db.stations;
+const User = db.users;
+
+const fetchStations = catchAsync(async (req, res, next) => {
+    const stations = await Station.findAll({
+        include: [{
+            model: User,
+            as: "user"  
+        }]
+    });
+    res.status(200).json({
+        stations
+    });
+})
 
 const addStation = catchAsync(async (req, res, next) => {
     const { comment, userId } = req.body;
@@ -18,5 +31,6 @@ const addStation = catchAsync(async (req, res, next) => {
 })
 
 module.exports = {
+    fetchStations,
     addStation
 }

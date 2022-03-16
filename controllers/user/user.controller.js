@@ -8,6 +8,13 @@ const passwordHelper = require('../../helpers/password');
 const tokenHelper = require('../../helpers/token');
 const AppError = require('../../utils/appError');
 
+const fetchUsers = catchAsync(async (req, res, next) => {
+    const users = await User.findAll({});
+    res.status(200).json({
+        users
+    });
+})
+
 const fetchRegisteredUser = catchAsync(async (req, res, next) => {
     if (!req.cookies.token) {
         return next(new AppError('Cookies not found!'));
@@ -66,8 +73,9 @@ const signup = catchAsync(async (req, res, next) => {
 
     await User.create(user);
 
-    res.status(200).json({
-        message: 'User registered successfully'
+    res.status(201).json({
+        message: 'User registered successfully',
+        statusCode: 201
     })
 })
 
@@ -104,5 +112,6 @@ module.exports = {
     login,
     logout,
     signup,
+    fetchUsers,
     fetchRegisteredUser
 }
