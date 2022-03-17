@@ -6,6 +6,7 @@ const checkAuth = require('../../middlewares/check-auth');
 router.post('/', checkAuth, stationController.addStation);
 
 router.get('/', checkAuth, stationController.fetchStations);
+router.patch('/:id', checkAuth, stationController.updateStation);
 router.delete('/:id', checkAuth, stationController.deleteStation);
 
 module.exports = router;

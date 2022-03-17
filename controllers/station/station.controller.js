@@ -8,7 +8,9 @@ const fetchStations = catchAsync(async (req, res, next) => {
         include: [{
             model: User,
             as: "user"  
-        }]
+        }],
+        limit: 5,
+        offset: 0
     });
     res.status(200).json({
         stations
@@ -30,7 +32,9 @@ const addStation = catchAsync(async (req, res, next) => {
         include: [{
             model: User,
             as: "user"  
-        }]
+        }],
+        limit: 5,
+        offset: 0
     });
 
     res.status(201).json({
@@ -60,7 +64,9 @@ const deleteStation = catchAsync(async (req, res, next) => {
             include: [{
                 model: User,
                 as: "user"  
-            }]
+            }],
+            limit: 5,
+            offset: 0
         });
 
         res.status(200).json({
@@ -68,10 +74,46 @@ const deleteStation = catchAsync(async (req, res, next) => {
             stations
         })
     }
+});
+
+const updateStation = catchAsync(async (req, res, next) => {
+    const { id } = req.params;
+    const { name, comment } = req.body;
+
+    const station = await Station.findOne({
+        where: {
+            id
+        }
+    })
+
+    if(station.userId === req.user.dataValues.id) {
+        const stationData = {
+            name,
+            comment
+        }
+
+        await station.update(stationData);
+
+        const allstations = await Station.findAll({
+            include: [{
+                model: User,
+                as: "user"  
+            }],
+            limit: 5,
+            offset: 0
+        });
+
+        res.status(200).json({
+            statusCode: 200,
+            message: "Successfully updated",
+            stations: allstations
+        })
+    }
 })
 
 module.exports = {
     fetchStations,
     addStation,
+    updateStation,
     deleteStation
 }
