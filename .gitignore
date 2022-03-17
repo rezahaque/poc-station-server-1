@@ -1,9 +1,6 @@
 # dependencies
 /node_modules
 
-# environments variables
-.env
-
 # misc
 .vscode
 .DS_Store
