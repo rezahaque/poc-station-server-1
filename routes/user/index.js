@@ -10,4 +10,6 @@ router.get('/', checkAuth, userController.fetchUsers);
 router.get("/logout", userController.logout);
 router.get("/reg-user", userController.fetchRegisteredUser);
 
+router.patch("/:id", checkAuth, userController.updateUser);
+
 module.exports = router;

@@ -86,29 +86,27 @@ const updateStation = catchAsync(async (req, res, next) => {
         }
     })
 
-    if(station.userId === req.user.dataValues.id) {
-        const stationData = {
-            name,
-            comment
-        }
-
-        await station.update(stationData);
-
-        const allstations = await Station.findAll({
-            include: [{
-                model: User,
-                as: "user"  
-            }],
-            limit: 5,
-            offset: 0
-        });
-
-        res.status(200).json({
-            statusCode: 200,
-            message: "Successfully updated",
-            stations: allstations
-        })
+    const stationData = {
+        name,
+        comment
     }
+
+    await station.update(stationData);
+
+    const allstations = await Station.findAll({
+        include: [{
+            model: User,
+            as: "user"  
+        }],
+        limit: 5,
+        offset: 0
+    });
+
+    res.status(200).json({
+        statusCode: 200,
+        message: "Successfully updated",
+        stations: allstations
+    })
 })
 
 module.exports = {

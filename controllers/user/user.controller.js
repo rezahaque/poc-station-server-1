@@ -72,10 +72,12 @@ const signup = catchAsync(async (req, res, next) => {
     }
 
     await User.create(user);
+    const users = await User.findAll({});
 
     res.status(201).json({
         message: 'User registered successfully',
-        statusCode: 201
+        statusCode: 201,
+        users
     })
 })
 
@@ -108,10 +110,33 @@ const logout = (_, res) => {
     });
 };
 
+const updateUser = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const { name, email } = req.body;
+
+    const user = await User.findOne({
+        where: {
+            id
+        }
+    })
+
+    const userData = {
+        name,
+        email
+    }
+
+    await user.update(userData);
+
+    const users = await User.findAll({});
+
+    res.status(200).json({ users, statusCode: 200 });
+})
+
 module.exports = {
     login,
     logout,
     signup,
+    updateUser,
     fetchUsers,
     fetchRegisteredUser
 }
