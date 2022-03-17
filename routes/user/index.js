@@ -11,5 +11,6 @@ router.get("/logout", userController.logout);
 router.get("/reg-user", userController.fetchRegisteredUser);
 
 router.patch("/:id", checkAuth, userController.updateUser);
+router.delete('/:id', checkAuth, userController.deleteUser);
 
 module.exports = router;

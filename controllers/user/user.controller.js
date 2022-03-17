@@ -130,12 +130,31 @@ const updateUser = catchAsync(async (req, res) => {
     const users = await User.findAll({});
 
     res.status(200).json({ users, statusCode: 200 });
+});
+
+const deleteUser = catchAsync(async (req, res) => {
+    const { id } = req.params;
+
+    await User.destroy({
+        where: {
+            id
+        }
+    })
+
+    const users = await User.findAll({});
+
+    res.status(200).json({
+        message: 'Deleted successfully',
+        users,
+        statusCode: 200
+    })
 })
 
 module.exports = {
     login,
     logout,
     signup,
+    deleteUser,
     updateUser,
     fetchUsers,
     fetchRegisteredUser

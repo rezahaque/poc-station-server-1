@@ -47,33 +47,25 @@ const addStation = catchAsync(async (req, res, next) => {
 const deleteStation = catchAsync(async (req, res, next) => {
     const { id } = req.params;
 
-    const station = await Station.findOne({
+    await Station.destroy({
         where: {
             id
         }
     })
 
-    if(station.userId === req.user.dataValues.id) {
-        await Station.destroy({
-            where: {
-                id
-            }
-        })
+    const stations = await Station.findAll({
+        include: [{
+            model: User,
+            as: "user"  
+        }],
+        limit: 5,
+        offset: 0
+    });
 
-        const stations = await Station.findAll({
-            include: [{
-                model: User,
-                as: "user"  
-            }],
-            limit: 5,
-            offset: 0
-        });
-
-        res.status(200).json({
-            message: 'Deleted successfully',
-            stations
-        })
-    }
+    res.status(200).json({
+        message: 'Deleted successfully',
+        stations
+    })
 });
 
 const updateStation = catchAsync(async (req, res, next) => {
